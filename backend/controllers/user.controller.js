@@ -102,7 +102,7 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    user = {
+    const loginUser = {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -119,7 +119,11 @@ export const login = async (req, res) => {
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         sameSite: "strict",
       })
-      .json({ message: `Welcom back ${user.fullname}`, success: true, user });
+      .json({
+        message: `Welcom back ${loginUser.fullname}`,
+        success: true,
+        user: loginUser,
+      });
   } catch (error) {
     console.log(error);
   }
@@ -159,7 +163,11 @@ export const updateProfile = async (req, res) => {
         .json({ message: "Something is missing", success: false });
     }
 
-    const skillsArray = skills.split(",");
+    let skillsArray;
+
+    if (skills) {
+      skillsArray = skills.split(",");
+    }
 
     // Extract the user ID from the request (Assumes an auth middleware injected `req.id`)
     const userId = req.id;
@@ -175,16 +183,16 @@ export const updateProfile = async (req, res) => {
     }
 
     // Apply the new values to the user document properties
-    user.fullname = fullname;
-    user.email = email;
-    user.phoneNumber = phoneNumber;
-    user.profile.bio = bio;
-    user.profile.skills = skillsArray;
+    if (fullname) user.fullname = fullname;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (bio) user.profile.bio = bio;
+    if (skillsArray) user.profile.skills = skillsArray;
 
     // Save the modified document back to the database
     await user.save();
 
-    user = {
+    const updatedUser = {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -196,7 +204,7 @@ export const updateProfile = async (req, res) => {
     // Send the success response with the updated user data
     return res.status(200).json({
       message: "Profile updated successfully",
-      user,
+      user: updatedUser,
       success: true,
     });
   } catch (error) {

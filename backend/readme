@@ -1,0 +1,10 @@
+routes
+
+http://localhost:3000/api/v1/user/register (POST)
+http://localhost:3000/api/v1/user/login (POST EXISTING USER)
+http://localhost:3000/api/v1/user/logout (GET-LOGOUT EXISTING USER)
+http://localhost:3000/api/v1/user/profile/update (POST UPDATE TO USER)
+
+TACKSTACK
+MONGODB (Database)
+EXPRESS (Routes)
