@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRoutes from "./routes/user.routes.js";
+import companyRoutes from "./routes/company.routes.js"
 
 // Initialize dotenv to load environment variables immediately
 dotenv.config({});
@@ -28,6 +29,10 @@ app.use(cors(corsOptions));
 
 // Mount the user routes. Any request starting with "/api/v1/user" will be handled by userRoutes
 app.use("/api/v1/user", userRoutes);
+
+// Mount the company routes. Any request starting with "/api/v1/company" will be handled by companyRoutes
+app.use("/api/v1/company", companyRoutes);
+
 
 // Start the server and listen for incoming network requests
 const PORT = process.env.PORT || 3000;

@@ -1,10 +1,17 @@
-routes
+// routes
 
-http://localhost:3000/api/v1/user/register (POST)
-http://localhost:3000/api/v1/user/login (POST EXISTING USER)
-http://localhost:3000/api/v1/user/logout (GET-LOGOUT EXISTING USER)
-http://localhost:3000/api/v1/user/profile/update (POST UPDATE TO USER)
+// user routes
+// http://localhost:3000/api/v1/user/register (POST)
+// http://localhost:3000/api/v1/user/login (POST EXISTING USER)
+// http://localhost:3000/api/v1/user/logout (GET-LOGOUT EXISTING USER)
+// http://localhost:3000/api/v1/user/profile/update (POST UPDATE TO USER)
 
-TACKSTACK
-MONGODB (Database)
-EXPRESS (Routes)
+// company routes
+// http://localhost:3000/api/v1/company/register (POST)
+// http://localhost:3000/api/v1/company/get (GET EXISTING COMPANIES)
+// http://localhost:3000/api/v1/company/get/6a9574493bb7dc6622260e38 (GET COMPANY BY ID)
+// http://localhost:3000/api/v1/company/update/6a9574493bb7dc6622260e38 (UPDATE COMPANY BY ID)
+
+// TACKSTACK
+// MONGODB (Database)
+// EXPRESS (Routes)
