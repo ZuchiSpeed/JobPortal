@@ -12,6 +12,10 @@
 // http://localhost:3000/api/v1/company/get/6a9574493bb7dc6622260e38 (GET COMPANY BY ID)
 // http://localhost:3000/api/v1/company/update/6a9574493bb7dc6622260e38 (UPDATE COMPANY BY ID)
 
+// job routes
+// http://localhost:3000/api/v1/job/post (POST JOB)
+
+
 // TACKSTACK
 // MONGODB (Database)
 // EXPRESS (Routes)
