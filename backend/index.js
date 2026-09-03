@@ -7,6 +7,7 @@ import connectDB from "./utils/db.js";
 import userRoutes from "./routes/user.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import jobRoutes from "./routes/job.routes.js";
+import applicationRoutes from "./routes/application.routes.js";
 
 // Initialize dotenv to load environment variables immediately
 dotenv.config({});
@@ -37,6 +38,9 @@ app.use("/api/v1/company", companyRoutes);
 
 // Mount the job routes. Any request starting with "/api/v1/job" will be handled by jobRoutes
 app.use("/api/v1/job", jobRoutes);
+
+// Mount the application routes. Any request starting with "/api/v1/application" will be handled by jobRoutes
+app.use("/api/v1/application", applicationRoutes);
 
 // Start the server and listen for incoming network requests
 const PORT = process.env.PORT || 3000;
