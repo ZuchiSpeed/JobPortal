@@ -9,12 +9,25 @@ import {
 } from "../controllers/user.controller.js";
 // Import the authentication middleware to protect specific routes
 import isAuthenticated from "../middleware/is.Authenticated.js";
+import { singleUpload } from "../middleware/multer.js";
 
 // Create a new router instance
 const router = express.Router();
 
+
+/**
+ * ROUTE: POST /register
+ * Purpose: Handles new user registration.
+ * 
+ * HOW IT WORKS TOGETHER: 
+ * The request passes through `singleUpload` FIRST. This middleware intercepts the 
+ * incoming multipart/form-data, extracts the file, and attaches it to `req.file`. 
+ * Only after the file is processed does the request move to the `register` controller, 
+ * which can then read `req.file` and the rest of `req.body`.
+ */
+
 // Map POST requests to "/register" to the register controller
-router.route("/register").post(register);
+router.route("/register").post(singleUpload, register);
 
 // Map POST requests to "/login" to the login controller
 router.route("/login").post(login);
