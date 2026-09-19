@@ -1,11 +1,19 @@
-import Navbar from './shared/Navbar';
+import CategoryCarousel from "./CategoryCarousel";
+import Footer from "./Footer";
+import HeroSection from "./HeroSection";
+import LatestJobs from "./LatestJobs";
+import Navbar from "./shared/Navbar";
 
 const Home = () => {
   return (
     <div>
-        <Navbar />
+      <Navbar />
+      <HeroSection />
+      <CategoryCarousel />
+      <LatestJobs />
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

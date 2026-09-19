@@ -8,11 +8,16 @@ import { Input } from "../ui/input";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setLoading } from "@/redux/authSlice";
 
 const Signup = () => {
   const navigate = useNavigate();
 
-  // State includes 'file: null' to hold the uploaded profile picture object.
+  // Hook to send actions to the Redux store
+  const dispatch = useDispatch();
+
+  // State holds all form data. State includes 'file: null' to hold the uploaded profile picture object.
   const [input, setInput] = useState({
     fullname: "",
     email: "",
@@ -50,12 +55,14 @@ const Signup = () => {
     }
 
     try {
+      // Turn on the loading spinner in Redux
+      dispatch(setLoading(true));
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
         headers: {
           // Explicitly telling axios to send as multipart/form-data
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true,
+        withCredentials: true, // Allows the backend to set the HTTP-only cookie
       });
 
       if (res.data.success) {
@@ -65,6 +72,8 @@ const Signup = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

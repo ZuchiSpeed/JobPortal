@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import Home from "./components/Home";
+import Jobs from "./components/Jobs";
 
 // Define the router configuration by creating an array of route objects
 const appRouter = createBrowserRouter([
@@ -17,6 +18,10 @@ const appRouter = createBrowserRouter([
     path: "/signup", // The /signup URL
     element: <Signup />, // Renders the Signup component when the user visits "/signup"
   },
+  {
+    path: "/jobs", // The /jobs URL
+    element: <Jobs /> // Renders the Jobs component when the user visits "/jobs"
+  }
 ]);
 
 // The main App component that acts as the root of our application
