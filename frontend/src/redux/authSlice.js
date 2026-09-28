@@ -6,6 +6,7 @@ const authSlice = createSlice({
   name: "auth", // The name of this slice (used for debugging)
   initialState: {
     loading: false, // Tracks if an API request (like login/signup) is in progress
+    user: null,
   },
   reducers: {
     // This function updates the 'loading' state.
@@ -13,11 +14,14 @@ const authSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 
 // Export the action so components can dispatch it
-export const { setLoading } = authSlice.actions;
+export const { setLoading, setUser } = authSlice.actions;
 
 // Export the reducer to be used in the store
 export default authSlice.reducer;

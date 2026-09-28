@@ -3,6 +3,9 @@ import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import Home from "./components/Home";
 import Jobs from "./components/Jobs";
+import Browse from "./components/Browse";
+import Profile from "./components/Profile";
+import JobDescription from "./components/JobDescription";
 
 // Define the router configuration by creating an array of route objects
 const appRouter = createBrowserRouter([
@@ -20,8 +23,20 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/jobs", // The /jobs URL
-    element: <Jobs /> // Renders the Jobs component when the user visits "/jobs"
-  }
+    element: <Jobs />, // Renders the Jobs component when the user visits "/jobs"
+  },
+  {
+    path: "/browse", // The /browse URL
+    element: <Browse />, // Renders the Browse component when the user visits "/browse"
+  },
+  {
+    path: "/profile", // The /browse URL
+    element: <Profile />, // Renders the Browse component when the user visits "/browse"
+  },
+  {
+    path: "/description/:id",
+    element: <JobDescription />,
+  },
 ]);
 
 // The main App component that acts as the root of our application
