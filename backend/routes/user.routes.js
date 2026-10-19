@@ -14,15 +14,14 @@ import { singleUpload } from "../middleware/multer.js";
 // Create a new router instance
 const router = express.Router();
 
-
 /**
  * ROUTE: POST /register
  * Purpose: Handles new user registration.
- * 
- * HOW IT WORKS TOGETHER: 
- * The request passes through `singleUpload` FIRST. This middleware intercepts the 
- * incoming multipart/form-data, extracts the file, and attaches it to `req.file`. 
- * Only after the file is processed does the request move to the `register` controller, 
+ *
+ * HOW IT WORKS TOGETHER:
+ * The request passes through `singleUpload` FIRST. This middleware intercepts the
+ * incoming multipart/form-data, extracts the file, and attaches it to `req.file`.
+ * Only after the file is processed does the request move to the `register` controller,
  * which can then read `req.file` and the rest of `req.body`.
  */
 
@@ -38,6 +37,8 @@ router.route("/logout").get(logout);
 // Map POST requests to "/profile/update".
 // Notice 'isAuthenticated' is placed BEFORE 'updateProfile'.
 // This means the server will verify the user's token FIRST. If valid, it proceeds to updateProfile.
-router.route("/profile/update").post(isAuthenticated, updateProfile);
+router
+  .route("/profile/update")
+  .post(isAuthenticated, singleUpload, updateProfile);
 
 export default router;

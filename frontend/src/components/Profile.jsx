@@ -6,12 +6,13 @@ import { Badge } from "./ui/badge";
 import AppliedJobTable from "./AppliedJobTable";
 import { useState } from "react";
 import UpdateProfileDialog from "./UpdateProfileDialog";
-
-const skills = ["HTML", "CSS", "JAVASCRIPT", "DATABASES"];
+import { useSelector } from "react-redux";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  const isResume = true;
+
+  // Retrieve the current user data from the Redux store
+  const { user } = useSelector((store) => store.auth);
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -23,27 +24,29 @@ const Profile = () => {
             <div className="flex items-center gap-5">
               <Avatar className="h-24 w-24 border-2 border-indigo-50 shadow-md">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
+                  src={
+                    user?.profile?.profilePhoto ||
+                    "https://github.com/shadcn.png"
+                  }
                   alt="Profile"
                 />
                 <AvatarFallback className="text-2xl bg-indigo-50 text-indigo-600 font-bold">
-                  TM
+                  {user?.fullname?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <h1 className="font-bold text-2xl text-gray-900">
-                  Kennedy Malonga
+                  {user?.fullname}
                 </h1>
                 <p className="text-gray-500 mt-1 max-w-md leading-relaxed">
-                  Passionate Frontend Developer focused on building scalable,
-                  user-centric web applications with modern technologies.
+                  {user?.profile?.bio || "No bio added yet."}
                 </p>
               </div>
             </div>
             <Button
               variant="outline"
               className="rounded-full px-4 gap-2 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors"
-            onClick={() => setOpen(true)}
+              onClick={() => setOpen(true)}
             >
               <Pen className="w-4 h-4" />
               <span>Edit Profile</span>
@@ -61,7 +64,7 @@ const Profile = () => {
                   Email
                 </p>
                 <span className="text-sm font-semibold text-gray-900">
-                  tmalonga737@gmail.com
+                  {user?.email}
                 </span>
               </div>
             </div>
@@ -74,7 +77,7 @@ const Profile = () => {
                   Phone
                 </p>
                 <span className="text-sm font-semibold text-gray-900">
-                  081 883 3073
+                  {user?.phoneNumber || "Not provided"}
                 </span>
               </div>
             </div>
@@ -86,8 +89,9 @@ const Profile = () => {
               <Briefcase className="w-4 h-4 text-indigo-600" /> Skills
             </h2>
             <div className="flex flex-wrap gap-2">
-              {skills.length > 0 ? (
-                skills.map((item, index) => (
+              {/* FIX 1: Added optional chaining before .length */}
+              {user?.profile?.skills?.length > 0 ? (
+                user?.profile?.skills.map((item, index) => (
                   <Badge
                     key={index}
                     className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 px-3 py-1 text-sm font-medium transition-colors"
@@ -108,9 +112,9 @@ const Profile = () => {
             <h2 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
               <FileText className="w-4 h-4 text-indigo-600" /> Resume
             </h2>
-            {isResume ? (
+            {user?.profile?.resume ? (
               <a
-                href="https://www.youtube.com/@SchoolboyKenny77"
+                href={user?.profile?.resume}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 p-4 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/30 hover:bg-indigo-50 hover:border-indigo-300 transition-all cursor-pointer"
@@ -120,22 +124,25 @@ const Profile = () => {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-indigo-900 group-hover:text-indigo-700">
-                    My Portfolio / Content
+                    View Resume
                   </p>
                   <p className="text-xs text-indigo-600/70">
                     Click to view or download
+                    {user?.profile?.resumeOriginalName
+                      ? `: ${user.profile.resumeOriginalName}`
+                      : ""}
                   </p>
                 </div>
               </a>
             ) : (
               <div className="p-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 text-center">
-                <p className="text-sm text-gray-500">No resume uploaded yet.</p>
+                <p className="text-sm text-gray-500">No resume uploaded</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Applied Jobs Card (Separated for better hierarchy) */}
+        {/* Applied Jobs Card */}
         <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 md:p-8">
           <h2 className="font-bold text-xl text-gray-900 mb-6 flex items-center gap-2">
             <Briefcase className="w-5 h-5 text-indigo-600" /> Applied Jobs
@@ -143,7 +150,9 @@ const Profile = () => {
           <AppliedJobTable />
         </div>
       </div>
-      <UpdateProfileDialog open={open} setOpen={true}/>
+
+      {/* Profile Update Modal */}
+      <UpdateProfileDialog open={open} setOpen={setOpen} />
     </div>
   );
 };

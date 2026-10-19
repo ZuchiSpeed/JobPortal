@@ -36,6 +36,12 @@ const Login = () => {
 
     try {
       dispatch(setLoading(true));
+
+      if (!input.role) {
+        toast.error("Please select a role (Student or Recruiter)");
+        return;
+      }
+
       // Send login credentials to the backend
       const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
         headers: {
@@ -47,7 +53,7 @@ const Login = () => {
       });
 
       if (res.data.success) {
-        dispatch(setUser(res.data.user))
+        dispatch(setUser(res.data.user));
         navigate("/"); // Redirect to homepage after successful login
         toast.success(res.data.message);
       }

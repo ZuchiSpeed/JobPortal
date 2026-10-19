@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 /**
  * @desc    Register a new user
@@ -31,6 +33,15 @@ export const register = async (req, res) => {
     // Hash the plain-text password using bcrypt (10 is the salt rounds for security)
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const profilePhotoUrl = "";
+    const file = req.file;
+
+    if (file) {
+      const fileUri = getDataUri(file);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      profilePhotoUrl = cloudResponse.secure_url;
+    }
+
     // Create and save the new user document in the database
     await User.create({
       fullname,
@@ -38,6 +49,9 @@ export const register = async (req, res) => {
       password: hashedPassword, // Store the hashed version, never the plain text
       phoneNumber,
       role,
+      profile: {
+        profilePhoto: profilePhotoUrl,
+      },
     });
 
     // Return a 201 Created success response
@@ -163,10 +177,14 @@ export const updateProfile = async (req, res) => {
         .json({ message: "Something is missing", success: false });
     }
 
-    let skillsArray;
+    // Process skills: split comma-separated string into an array and trim whitespace
+    let skillsArray = [];
 
     if (skills) {
-      skillsArray = skills.split(",");
+      skillsArray = skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter((skill) => skill !== "");
     }
 
     // Extract the user ID from the request (Assumes an auth middleware injected `req.id`)
@@ -188,6 +206,17 @@ export const updateProfile = async (req, res) => {
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
     if (skillsArray) user.profile.skills = skillsArray;
+
+    // Handle Resume Upload (Only if a new file is provided)
+    if (file) {
+      const fileUri = getDataUri(file);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+        resource_type: "raw",
+      });
+
+      user.profile.resume = cloudResponse.secure_url; // save the cloudinary url of the uploaded resume
+      user.profile.resumeOriginalName = file.originalname; //save the original file name
+    }
 
     // Save the modified document back to the database
     await user.save();
