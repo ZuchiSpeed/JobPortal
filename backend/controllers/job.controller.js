@@ -122,7 +122,11 @@ export const getJobById = async (req, res) => {
   try {
     // Extract the job ID from the URL route parameters (e.g., /get/64f1a2b3...)
     const jobId = req.params.id;
-    const job = await Job.findById(jobId);
+
+    // Populate 'applications' to check if the current user has already applied
+    const job = await Job.findById(jobId).populate({
+      path: "applications",
+    });
 
     if (!job) {
       return res.status(404).json({
