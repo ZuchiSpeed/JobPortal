@@ -33,7 +33,7 @@ export const register = async (req, res) => {
     // Hash the plain-text password using bcrypt (10 is the salt rounds for security)
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const profilePhotoUrl = "";
+    let profilePhotoUrl = "";
     const file = req.file;
 
     if (file) {

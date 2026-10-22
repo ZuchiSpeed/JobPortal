@@ -4,9 +4,21 @@ import Footer from "./Footer";
 import HeroSection from "./HeroSection";
 import LatestJobs from "./LatestJobs";
 import Navbar from "./shared/Navbar";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Home = () => {
-  useGetAllJobs() //Call the custom hook to fetch all jobs when the Home component mounts
+  useGetAllJobs(); //Call the custom hook to fetch all jobs when the Home component mounts
+
+  const { user } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.role === "recruiter") {
+      navigate("/admin/companies");
+    }
+  }, []);
 
   return (
     <div>

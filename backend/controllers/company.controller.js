@@ -1,4 +1,6 @@
 import { Company } from "../models/company.model.js";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 /**
  * @desc    Register a new company
@@ -118,8 +120,12 @@ export const updateCompany = async (req, res) => {
      // Access the uploaded file (e.g., a company logo) if a file upload middleware like Mul
     const file = req.file;
 
+    const fileUri = getDataUri(file)
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content)
+    const logo = cloudResponse.secure_url
+
     // Package the extracted fields into an object to be passed to the database
-    const updatedData = { name, description, website, location };
+    const updatedData = { name, description, website, location, logo };
 
     // Find the company by its ID and update its fields with 'updatedData'
     // The { new: true } option ensures Mongoose returns the *updated* document, rather than the old
