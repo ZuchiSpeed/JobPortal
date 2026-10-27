@@ -23,21 +23,26 @@ const JobDescription = () => {
 
   const isInitiallyApplied =
     singleJob?.applications?.some(
-      (application) => application.applicant === user?._id,
+      (application) => application.application?._id === user?._id,
     ) || false;
 
   const [isApplied, setIsApplied] = useState(isInitiallyApplied);
 
   const params = useParams();
   const jobId = params.id;
+  const hasValidJobId = /^[a-f\d]{24}$/i.test(jobId || "");
   const dispatch = useDispatch();
 
   const applyJobHandler = async () => {
+    if (!hasValidJobId) {
+      toast.error("This job is unavailable. Please return to the job listings.");
+      return;
+    }
+
     try {
-      // NOTE: In a standard REST API, applying to a job should be a POST request.
-      // Kept as GET to match your existing backend, but consider changing to POST in the future.
-      const res = await axios.get(
+      const res = await axios.post(
         `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+        {},
         { withCredentials: true },
       );
 
@@ -52,6 +57,8 @@ const JobDescription = () => {
   };
 
   useEffect(() => {
+    if (!hasValidJobId) return;
+
     const fetchSingleJob = async () => {
       try {
         const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
@@ -62,7 +69,7 @@ const JobDescription = () => {
           dispatch(setSingleJob(res.data.job)); // Updates Redux for real-time UI sync
           setIsApplied(
             res.data.job.applications?.some(
-              (application) => application.applicant === user?._id,
+              (application) => application.application?._id === user?._id,
             ) || false,
           );
         }
@@ -71,7 +78,7 @@ const JobDescription = () => {
       }
     };
     fetchSingleJob();
-  }, [jobId, dispatch, user?._id]);
+  }, [jobId, hasValidJobId, dispatch, user?._id]);
 
   return (
     <div className="max-w-5xl mx-auto my-10 px-4">
@@ -100,7 +107,7 @@ const JobDescription = () => {
           {/* Apply Button */}
           <Button
             onClick={isApplied ? null : applyJobHandler}
-            disabled={isApplied}
+            disabled={isApplied || !hasValidJobId}
             className={`w-full md:w-auto px-8 py-6 text-base font-semibold rounded-xl transition-all duration-200 ${
               isApplied
                 ? "bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200"

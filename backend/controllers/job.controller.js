@@ -123,9 +123,17 @@ export const getJobById = async (req, res) => {
     // Extract the job ID from the URL route parameters (e.g., /get/64f1a2b3...)
     const jobId = req.params.id;
 
+    if (!/^[a-f\d]{24}$/i.test(jobId || "")) {
+      return res.status(400).json({
+        message: "A valid job ID is required",
+        success: false,
+      });
+    }
+
     // Populate 'applications' to check if the current user has already applied
     const job = await Job.findById(jobId).populate({
       path: "applications",
+      populate: { path: "application", select: "_id" },
     });
 
     if (!job) {
@@ -157,15 +165,9 @@ export const getAdminJobs = async (req, res) => {
     const adminId = req.id;
 
     // Query the database for all jobs where the 'created_by' field matches the admin's ID
-    const jobs = await Job.find({ created_by: adminId });
-
-    // Check if the returned array is empty
-    if (jobs.length === 0) {
-      return res.status(404).json({
-        message: "Jobs not found",
-        success: false,
-      });
-    }
+    const jobs = await Job.find({ created_by: adminId })
+      .populate({ path: "company" })
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       jobs,

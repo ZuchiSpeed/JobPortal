@@ -10,10 +10,8 @@ import {
 
 const router = express.Router();
 
-// Map requests to "/apply/:id".
-// FIX/SUGGESTION: In RESTful API design, actions that create or modify data (like applying for a job)
-// should use POST requests, not GET. I highly recommend changing .get() to .post() here and in your
-router.route("/apply/:id").get(isAuthenticated, applyJob);
+// Map POST requests to "/apply/:id" to create a job application.
+router.route("/apply/:id").post(isAuthenticated, applyJob);
 
 // Map GET requests to "/get" to fetch the user's applied jobs
 router.route("/get").get(isAuthenticated, getAppliedJobs);

@@ -11,10 +11,10 @@ export const applyJob = async (req, res) => {
     const userId = req.id;
     const jobId = req.params.id;
 
-    // Basic validation to ensure a job ID was actually provided in the URL
-    if (!jobId) {
+    // Reject malformed IDs before Mongoose attempts to cast them.
+    if (!/^[a-f\d]{24}$/i.test(jobId || "")) {
       return res.status(400).json({
-        message: "Job ID is required",
+        message: "A valid job ID is required",
         success: false,
       });
     }
@@ -51,7 +51,7 @@ export const applyJob = async (req, res) => {
 
     // Push the new application's ID into the Job's 'application' array (if your Job model tracks applicants this way)
     // and save the updated Job document
-    job.application.push(newApplication._id);
+    job.applications.push(newApplication._id);
     await job.save();
 
     return res.status(201).json({

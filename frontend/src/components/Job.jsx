@@ -6,7 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  // const jobId = "912ebfsbfsf"
+  const hasValidJobId = /^[a-f\d]{24}$/i.test(job?._id || "");
+  const openJob = () => {
+    if (hasValidJobId) {
+      navigate(`/description/${job._id}`);
+    }
+  };
 
   const getDaysAgo = (mongodbTime) => {
     if (!mongodbTime) return 0;
@@ -86,13 +91,18 @@ const Job = ({ job }) => {
       {/* Footer Actions */}
       <div className="flex items-center gap-3 pt-4 border-t border-gray-50">
         <Button
-          onClick={() => navigate(`/description/${job?._id}`)}
+          onClick={openJob}
+          disabled={!hasValidJobId}
           variant="outline"
           className="flex-1 rounded-lg"
         >
           Details
         </Button>
-        <Button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
+        <Button
+          onClick={openJob}
+          disabled={!hasValidJobId}
+          className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
+        >
           Apply Now
         </Button>
       </div>
