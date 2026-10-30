@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -13,10 +13,11 @@ import {
 } from "../ui/select";
 import { Button } from "../ui/button";
 import { Briefcase, AlertCircle, Send, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/constant";
+import useGetAllCompanies from "@/hooks/useGetAllCompanies";
 
 const PostJob = () => {
   const [input, setInput] = useState({
@@ -33,8 +34,44 @@ const PostJob = () => {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { id: jobId } = useParams();
 
   const { companies } = useSelector((store) => store.company);
+  useGetAllCompanies();
+
+  useEffect(() => {
+    if (!jobId) return;
+
+    const fetchJob = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
+          withCredentials: true,
+        });
+
+        if (res.data.success) {
+          const job = res.data.job;
+          setInput({
+            title: job.title ?? "",
+            description: job.description ?? "",
+            requirements: Array.isArray(job.requirements)
+              ? job.requirements.join(", ")
+              : job.requirements ?? "",
+            salary: job.salary ?? "",
+            location: job.location ?? "",
+            jobType: job.jobType ?? "",
+            experience: job.experienceLevel ?? "",
+            position: job.position ?? 0,
+            companyId: job.company?._id ?? job.company ?? "",
+          });
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to load job");
+        navigate("/admin/jobs");
+      }
+    };
+
+    fetchJob();
+  }, [jobId, navigate]);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -52,7 +89,12 @@ const PostJob = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await axios.post(`${JOB_API_END_POINT}/post`, input, {
+      const res = await axios({
+        method: jobId ? "put" : "post",
+        url: jobId
+          ? `${JOB_API_END_POINT}/update/${jobId}`
+          : `${JOB_API_END_POINT}/post`,
+        data: input,
         headers: {
           "Content-Type": "application/json",
         },
@@ -81,9 +123,13 @@ const PostJob = () => {
             <Briefcase className="w-6 h-6 text-indigo-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Post a New Job</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {jobId ? "Edit Job" : "Post a New Job"}
+            </h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              Fill in the details to create a new job listing.
+              {jobId
+                ? "Update the details of this job listing."
+                : "Fill in the details to create a new job listing."}
             </p>
           </div>
         </div>
@@ -238,7 +284,10 @@ const PostJob = () => {
                 {companies.length > 0 ? (
                   <Select
                     onValueChange={selectChangeHandler}
-                    value={input.companyId}
+                    value={
+                      companies.find((company) => company._id === input.companyId)
+                        ?.name?.toLowerCase() || ""
+                    }
                   >
                     <SelectTrigger className="w-full h-11 border-gray-200 focus:ring-indigo-500">
                       <SelectValue placeholder="Select a registered company" />
@@ -280,6 +329,7 @@ const PostJob = () => {
                 type="button"
                 variant="outline"
                 className="w-full sm:w-auto border-gray-200 text-gray-600 hover:bg-gray-50 h-11"
+                onClick={() => navigate("/admin/jobs")}
               >
                 Cancel
               </Button>
@@ -291,12 +341,12 @@ const PostJob = () => {
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Posting...
+                    {jobId ? "Saving..." : "Posting..."}
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    Post New Job
+                    {jobId ? "Save Changes" : "Post New Job"}
                   </>
                 )}
               </Button>

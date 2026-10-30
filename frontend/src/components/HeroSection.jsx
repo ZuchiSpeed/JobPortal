@@ -1,7 +1,20 @@
 import { Search, Sparkles, TrendingUp } from "lucide-react";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setSearchedQuery } from "@/redux/jobSlice";
 
 const HeroSection = () => {
+  const [query, setQuery] = useState("")
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const searchJobHandler = () => {
+    dispatch(setSearchedQuery(query))
+    navigate("/browse")
+  }
+
   return (
     <div className="relative w-full bg-white overflow-hidden">
       {/* 🎨 Decorative Background Elements (Subtle blurred orbs for depth) */}
@@ -42,13 +55,14 @@ const HeroSection = () => {
             
             {/* Input Field */}
             <input
+            onChange={(e) => setQuery(e.target.value)}
               type="text"
               placeholder="Job title, keywords, or company..."
               className="flex-1 px-2 py-3 text-lg outline-none text-gray-800 placeholder-gray-400 bg-transparent"
             />
             
             {/* CTA Button */}
-            <Button className="bg-[#13993e] hover:bg-[#0f8a36] text-white rounded-xl px-6 md:px-8 py-6 text-base font-semibold transition-all duration-200 shadow-md shadow-[#13993e]/20 hover:shadow-lg hover:shadow-[#13993e]/30 hover:-translate-y-0.5">
+            <Button onClick={searchJobHandler} className="bg-[#13993e] hover:bg-[#0f8a36] text-white rounded-xl px-6 md:px-8 py-6 text-base font-semibold transition-all duration-200 shadow-md shadow-[#13993e]/20 hover:shadow-lg hover:shadow-[#13993e]/30 hover:-translate-y-0.5">
               Search Jobs
             </Button>
           </div>
@@ -61,6 +75,7 @@ const HeroSection = () => {
             </span>
             {["Frontend Developer", "UI/UX Designer", "Remote", "Marketing"].map((tag) => (
               <button
+              onClick={() => searchJobHandler(tag)} 
                 key={tag}
                 className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-[#13993e]/10 hover:text-[#13993e] transition-colors duration-200 border border-transparent hover:border-[#13993e]/20"
               >

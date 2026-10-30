@@ -3,9 +3,11 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
+  const user = useSelector((store) => store.auth.user);
   const hasValidJobId = /^[a-f\d]{24}$/i.test(job?._id || "");
   const openJob = () => {
     if (hasValidJobId) {
@@ -98,13 +100,15 @@ const Job = ({ job }) => {
         >
           Details
         </Button>
-        <Button
-          onClick={openJob}
-          disabled={!hasValidJobId}
-          className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
-        >
-          Apply Now
-        </Button>
+        {user?.role === "student" && (
+          <Button
+            onClick={openJob}
+            disabled={!hasValidJobId}
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
+          >
+            Apply Now
+          </Button>
+        )}
       </div>
     </div>
   );

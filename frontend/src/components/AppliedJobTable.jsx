@@ -9,57 +9,21 @@ import {
   TableRow,
 } from "./ui/table";
 import { Badge } from "./ui/badge";
+import { useSelector } from "react-redux";
 
-// Realistic mock data
-const appliedJobs = [
-  {
-    id: 1,
-    date: "17 Jan 2026",
-    role: "Backend Developer",
-    company: "Telecom Namibia",
-    status: "Selected",
-  },
-  {
-    id: 2,
-    date: "15 Jan 2026",
-    role: "Frontend Engineer",
-    company: "MTC Namibia",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    date: "10 Jan 2026",
-    role: "Data Analyst",
-    company: "Bank Windhoek",
-    status: "Interview",
-  },
-  {
-    id: 4,
-    date: "05 Jan 2026",
-    role: "UI/UX Designer",
-    company: "Namibia Breweries",
-    status: "Rejected",
-  },
-];
 
 const getStatusBadge = (status) => {
   switch (status.toLowerCase()) {
-    case "selected":
+    case "accepted":
       return (
         <Badge className="bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 font-medium">
-          Selected
+          accepted
         </Badge>
       );
     case "pending":
       return (
         <Badge className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200 font-medium">
           Pending
-        </Badge>
-      );
-    case "interview":
-      return (
-        <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 font-medium">
-          Interview
         </Badge>
       );
     case "rejected":
@@ -74,6 +38,8 @@ const getStatusBadge = (status) => {
 };
 
 const AppliedJobTable = () => {
+  const {allAppliedJobs} = useSelector(store => store.job)
+
   return (
     <div className="w-full">
       <Table className="border border-gray-100 rounded-xl overflow-hidden">
@@ -101,22 +67,22 @@ const AppliedJobTable = () => {
         </TableHeader>
 
         <TableBody>
-          {appliedJobs.map((job) => (
+          {allAppliedJobs.map((appliedjob) => (
             <TableRow
-              key={job.id}
+              key={appliedjob.id}
               className="hover:bg-gray-50/80 transition-colors border-b border-gray-50 last:border-b-0 group cursor-pointer"
             >
               <TableCell className="text-sm text-gray-600 font-medium py-4">
-                {job.date}
+                {appliedjob?.job?.createdAt?.slice(0, 10)}
               </TableCell>
               <TableCell className="text-sm text-gray-900 font-semibold py-4">
-                {job.role}
+                {appliedjob?.job?.title ?? "Job no longer available"}
               </TableCell>
               <TableCell className="text-sm text-gray-600 py-4">
-                {job.company}
+                {appliedjob?.job?.company?.name}
               </TableCell>
               <TableCell className="text-right py-4">
-                {getStatusBadge(job.status)}
+                {getStatusBadge(appliedjob.status)}
               </TableCell>
               <TableCell className="text-right py-4">
                 <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-colors" />

@@ -34,6 +34,8 @@ const JobDescription = () => {
   const dispatch = useDispatch();
 
   const applyJobHandler = async () => {
+    if (user?.role !== "student") return;
+
     if (!hasValidJobId) {
       toast.error("This job is unavailable. Please return to the job listings.");
       return;
@@ -104,37 +106,38 @@ const JobDescription = () => {
             </div>
           </div>
 
-          {/* Apply Button */}
-          <Button
-            onClick={isApplied ? null : applyJobHandler}
-            disabled={isApplied || !hasValidJobId}
-            className={`w-full md:w-auto px-8 py-6 text-base font-semibold rounded-xl transition-all duration-200 ${
-              isApplied
-                ? "bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-200"
-            }`}
-          >
-            {isApplied ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                Already Applied
-              </span>
-            ) : (
-              "Apply Now"
-            )}
-          </Button>
+          {user?.role === "student" && (
+            <Button
+              onClick={isApplied ? null : applyJobHandler}
+              disabled={isApplied || !hasValidJobId}
+              className={`w-full md:w-auto px-8 py-6 text-base font-semibold rounded-xl transition-all duration-200 ${
+                isApplied
+                  ? "bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200"
+                  : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-200"
+              }`}
+            >
+              {isApplied ? (
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Already Applied
+                </span>
+              ) : (
+                "Apply Now"
+              )}
+            </Button>
+          )}
         </div>
       </div>
 

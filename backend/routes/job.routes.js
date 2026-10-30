@@ -7,6 +7,7 @@ import {
   getAllJobs,
   getJobById,
   jobPost,
+  updateJob,
 } from "../controllers/job.controller.js";
 
 // Create a new router instance to group job-related routes
@@ -15,6 +16,8 @@ const router = express.Router();
 // Map POST requests to "/post".
 // 'isAuthenticated' runs first to verify the user's token. If valid, it passes control to 'jobPost'.
 router.route("/post").post(isAuthenticated, jobPost);
+
+router.route("/update/:id").put(isAuthenticated, updateJob);
 
 // Map GET requests to "/get" to fetch all jobs (requires authentication)
 router.route("/get").get(isAuthenticated, getAllJobs);

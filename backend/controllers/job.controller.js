@@ -68,6 +68,72 @@ export const jobPost = async (req, res) => {
   }
 };
 
+export const updateJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+
+    if (!/^[a-f\d]{24}$/i.test(jobId || "")) {
+      return res.status(400).json({
+        message: "A valid job ID is required",
+        success: false,
+      });
+    }
+
+    const {
+      title,
+      description,
+      requirements,
+      salary,
+      location,
+      jobType,
+      experience,
+      position,
+      companyId,
+    } = req.body;
+
+    const updates = {
+      title,
+      description,
+      requirements: Array.isArray(requirements)
+        ? requirements
+        : String(requirements ?? "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+      salary,
+      location,
+      jobType,
+      experienceLevel: experience,
+      position,
+      company: companyId,
+    };
+
+    const job = await Job.findOneAndUpdate(
+      { _id: jobId, created_by: req.id },
+      { $set: updates },
+      { new: true, runValidators: true },
+    ).populate("company");
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Job updated successfully",
+      job,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
+  }
+};
+
 /**
  * @desc    Get all jobs (with optional keyword search)
  * @route   GET /api/v1/job/get
@@ -94,13 +160,6 @@ export const getAllJobs = async (req, res) => {
         path: "company",
       })
       .sort({ createdAt: -1 });
-
-    if (jobs.length === 0) {
-      return res.status(404).json({
-        message: "Jobs not found.",
-        success: false,
-      });
-    }
 
     return res.status(200).json({
       jobs,
