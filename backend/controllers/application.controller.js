@@ -114,11 +114,11 @@ export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
 
-    // Find the specific job and populate its 'application' array (the list of people who applied).
-    // We then nest-populate 'application' again to fetch the actual User details (name, email, resume)
+    // Populate the Job's 'applications' array, then each Application's user reference.
+    // This fetches the actual User details (name, email, resume)
     // associated with each application document.
     const job = await Job.findById(jobId).populate({
-      path: "application", // Fetch the Application documents attached to this Job
+      path: "applications", // Fetch the Application documents attached to this Job
       options: { sort: { createdAt: -1 } },
       populate: {
         path: "application", // Inside the Application model, fetch the User reference
